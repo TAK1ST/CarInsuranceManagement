@@ -9,5 +9,13 @@ package Application.Entity;
  * @author asus
  */
 public class Car {
+   private String licensePlate;
+   private String carOwner;
+   private String phoneNumber;
+   private String carBrand;
+   private int price;
+   private Date registerDate;
+   private String placeOfRegistration;
+   private String numberOfSeat;
     
-}
+   }

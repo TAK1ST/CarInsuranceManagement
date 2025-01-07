@@ -11,10 +11,10 @@ import static Application.Constant.regex.REGEX_CHARACTER;
  * @author asus
  */
 public class validInput {
-    public String getchoice(String option) throws Exception
+    public int getchoice(String option) throws Exception
     {
         if !(option.matches(REGEX_CHARACTER))
                 throw new "Invalid input";
-        return option;
+        return Integer.parseInt(option);
     }
 }
