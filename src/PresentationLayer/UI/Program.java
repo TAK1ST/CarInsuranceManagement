@@ -4,8 +4,12 @@
  */
 package PresentationLayer.UI;
 
-import java.util.Arrays;
-import java.util.List;
+//import static Application.Constant.DateFormat.dateFormat;
+//import Application.Entity.Car;
+//import Application.Service.CarService;
+//import Application.Service.IService;
+//import java.util.List;
+import static Utils.StartUtils.start;
 
 /**
  *
@@ -13,49 +17,67 @@ import java.util.List;
  */
 public class Program {
 
-    public void displayMenu() {
-        List<String> menuItems = Arrays.asList(
-                "Add new car",
-                "Find a car by license plate",
-                "Update car information",
-                "Delete car information",
-                "Add an insurance statement",
-                "List of insurance statements",
-                "Report uninsured cars",
-                "Save data",
-                "Quit"
-        );
-        System.out.println(
-                "==========Car Management==========");
-        int count = 1;
-        for (String item : menuItems) {
-            System.out.println(count++ + "." + item);
-        }
-    }
+    public static void main(String[] args) throws Exception {
+        start();
 
-    public void handleOption(int option) {
-        switch (option) {
-            case 1 -> {
-            }
-            case 2 -> {
-            }
-            case 3 -> {
-            }
-            case 4 -> {
-            }
-            case 5 -> {
-            }
-            case 6 -> {
-            }
-            case 7 -> {
-            }
-            case 8 -> {
-            }
-            case 9 -> {
-            }
-            default ->
-                System.out.println("Invalid please enter [1-9]");
-        }
+//        //Test
+//        try {
+//            String projectRoot = System.getProperty("user.dir");
+//            String carInputFile = projectRoot + "/src/DataLayer/Data/CarData.txt";
+//
+//            // Initialize service
+//            IService<Car> carService = new CarService(carInputFile);
+//
+//            // Test adding a new car
+//            testAddNewCar(carService);
+//
+//            // Test reading and displaying all cars
+//            testDisplayAllCars(carService);
+//
+//        } catch (Exception e) {
+//            System.err.println("Program error: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private static void testAddNewCar(IService<Car> service) {
+//        try {
+//            Car newCar = new Car(
+//                    "59A-12345",
+//                    "Nguyễn Văn A",
+//                    "0123456789",
+//                    "Toyota",
+//                    500000000,
+//                    dateFormat.parse("01/01/2024"),
+//                    "Hà Nội",
+//                    "5"
+//            );
+//
+//            service.add(newCar);
+//            System.out.println("Successfully added new car:");
+//            System.out.println(newCar);
+//            System.out.println("------------------------");
+//
+//        } catch (Exception e) {
+//            System.err.println("Error adding new car: " + e.getMessage());
+//        }
+//    }
+//
+//    private static void testDisplayAllCars(IService<Car> service) {
+//        try {
+//            System.out.println("\nAll cars in system:");
+//            System.out.println("------------------------");
+//            List<Car> cars = service.getList();
+//
+//            if (cars.isEmpty()) {
+//                System.out.println("No cars found in the system.");
+//                return;
+//            }
+//
+//            cars.forEach(car -> System.out.println(car));
+//
+//        } catch (Exception e) {
+//            System.err.println("Error displaying cars: " + e.getMessage());
+//        }
     }
-
 }
