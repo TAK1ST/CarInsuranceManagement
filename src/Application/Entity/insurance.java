@@ -1,7 +1,7 @@
 
 package Application.Entity;
 
-import Utils.ValidationUtils;
+import Utils.validation.ValidationUtils;
 import java.util.Date;
 
 /**

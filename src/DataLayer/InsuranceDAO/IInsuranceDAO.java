@@ -5,7 +5,7 @@
 package DataLayer.InsuranceDAO;
 
 import DataLayer.IProductDAO;
-import static Utils.ValidationUtils.validInsuranceId;
+import static Utils.validation.ValidationUtils.validInsuranceId;
 
 /**
  *

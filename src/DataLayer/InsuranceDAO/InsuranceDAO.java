@@ -9,7 +9,7 @@ import Application.Entity.Car;
 import Application.Entity.Insurance;
 import DataLayer.CarDAO.CarDAO;
 import DataLayer.IFileManagement;
-import static Utils.ValidationUtils.validInsuranceId;
+import static Utils.validation.ValidationUtils.validInsuranceId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;

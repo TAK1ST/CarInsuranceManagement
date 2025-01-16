@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Utils;
+package Utils.validation;
 
 import static Application.Constant.Regex.REGEX_CHARACTER;
-import static Application.Constant.Regex.REGEX_LENGHT_NUM;
+import static Application.Constant.Regex.REGEX_LENGHT_INSURANCEID;
 
 /**
  *
@@ -24,7 +24,7 @@ public class ValidationUtils {
         if (InsuranceId.isEmpty())
             status  = false;
         
-        if (InsuranceId.matches(REGEX_LENGHT_NUM))
+        if (InsuranceId.matches(REGEX_LENGHT_INSURANCEID))
             status  = true;
         return status;
     }

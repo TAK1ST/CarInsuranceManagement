@@ -47,7 +47,7 @@ public class FileManagement<T> implements IFileManagement<T> {
     public static void loadFile(String filePathStr) {
         Path filePath = Paths.get(filePathStr);
         try {
-            // Ensure parent directories exist
+            // create dictionary if not exist
             Path parentDir = filePath.getParent();
             if (parentDir != null && Files.notExists(parentDir)) {
                 Files.createDirectories(parentDir);

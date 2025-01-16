@@ -10,6 +10,7 @@ import Application.Service.IService;
 import DataLayer.FileManagement;
 import static PresentationLayer.UI.Menu.getUserChoice;
 import Utils.DataInput;
+import static Utils.validation.ValidCarInput.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -47,62 +48,63 @@ public class CarMenu implements IMenu {
         handleOption(getUserChoice());
     }
 
-    public Car getCar() throws Exception {
-        String licensePlate = DataInput.getString("Enter car license plate:");
-        String carOwner = DataInput.getString("Enter car owner:");
-        String phoneNumber = DataInput.getString("Enter phoneNumber:");
-        String carBrand = DataInput.getString("Enter car brand:");
-        int price = DataInput.getIntegerNumber("Enter car price:");
-        Date registerDate = DataInput.getDate("Enter car register date:");
-        String placeOfRegistration = DataInput.getString("Enter car place of registration:");
-        String numberOfSeat = DataInput.getString("Enter car number of seat:");
-        return new Car(licensePlate, carOwner, phoneNumber,
-                carBrand, price, registerDate, placeOfRegistration, numberOfSeat);
-    }
-
     public void addNewCar() {
-        try {
-            Car newCar = getCar();
-            service.add(newCar);
-            service.getList();
-            System.out.println(">>Car added successfully.");
-        } catch (Exception e) {
-            System.out.println(">>" + e.getMessage());
+        boolean stop = true;
+        while (stop) {
+            try {
+                Car newCar = getCar();
+                service.add(newCar);
+                service.getList();
+                System.out.println(">>Car added successfully.");
+                System.out.println("Do you want to enter another vehicle? (yes/no): ");
+                String response = DataInput.getString();
+                if (!response.equalsIgnoreCase("yes")) {
+                    stop = false;
+                }
+            } catch (Exception e) {
+                System.out.println(">>" + e.getMessage());
+            }
         }
     }
 
     public void handleOption(int option) {
         boolean stop = true;
-    try {
-        do {
-            switch (option) {
-                case 1 -> { 
-                    addNewCar(); 
-                    saveData(); // save after adding
+        try {
+            do {
+                switch (option) {
+                    case 1:
+                        addNewCar();
+                        saveData();
+                        break;
+                    case 2:
+                        service.printList();
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    case 5:
+                        break;
+                    case 6:
+                        break;
+                    case 7:
+                        break;
+                    case 8:
+                        saveData();
+                        System.out.println("Data saved successfully!");
+                        break;
+                    case 9:
+                        saveData();
+                        stop = false;
+                        System.out.println("Exiting...");
+                    default:
+                        System.out.println("Invalid please enter [1-9]");
                 }
-                case 2 -> { service.printList(); }
-                case 3 -> {}
-                case 4 -> {}
-                case 5 -> {}
-                case 6 -> {}
-                case 7 -> {}
-                case 8 -> { 
-                    saveData();
-                    System.out.println("Data saved successfully!");
+                if (stop) {
+                    displayCarMenu();
+                    option = getUserChoice();
                 }
-                case 9 -> {
-                    saveData(); // save before exit
-                    stop = false;
-                    System.out.println("Exiting...");
-                }
-                default ->
-                    System.out.println("Invalid please enter [1-9]");
-            }
-            if (stop) {
-                displayCarMenu();
-                option = getUserChoice();
-            }
-        } while (stop);
+            } while (stop);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -111,11 +113,98 @@ public class CarMenu implements IMenu {
     @Override
     public void saveData() {
         try {
-            if (service instanceof CarService carService) {
+            if (service instanceof CarService) {
+                CarService carService = (CarService) service;
                 carService.saveToFile(FileManagement.carInputFile);
             }
+
         } catch (Exception e) {
             System.out.println("Error saving data: " + e.getMessage());
         }
+    }
+
+    //redundance should feed after complete lab211, should you generic function.
+    public Car getCar() throws Exception {
+        String licensePlate;
+        String carOwner;
+        String phoneNumber;
+        String carBrand;
+        int price;
+        Date registerDate;
+        String placeOfRegistration;
+        String numberOfSeat;
+
+        while (true) {
+            licensePlate = DataInput.getString("Enter car license plate:");
+            if (validateLicensePlate(licensePlate)) {
+                break; 
+            } else {
+                System.out.println("Invalid license plate. Please try again.");
+            }
+        }
+
+        while (true) {
+            carOwner = DataInput.getString("Enter car owner:");
+            if (validateCarOwner(carOwner)) {
+                break;
+            } else {
+                System.out.println("Invalid car owner. Please try again.");
+            }
+        }
+
+        while (true) {
+            phoneNumber = DataInput.getString("Enter phone number:");
+            if (validatePhoneNumber(phoneNumber)) {
+                break;
+            } else {
+                System.out.println("Invalid phone number. Please try again.");
+            }
+        }
+
+        while (true) {
+            carBrand = DataInput.getString("Enter car brand:");
+            if (validateCarBrand(carBrand)) {
+                break;
+            } else {
+                System.out.println("Invalid car brand. Please try again.");
+            }
+        }
+
+        while (true) {
+            price = DataInput.getIntegerNumber("Enter car price:");
+            if (validateVehicleValue(price)) {
+                break;
+            } else {
+                System.out.println("Invalid vehicle price. Please enter a value greater than 999.");
+            }
+        }
+
+        while (true) {
+            registerDate = DataInput.getDate("Enter car register date:");
+            if (validateRegistrationDate(registerDate)) {
+                break;
+            } else {
+                System.out.println("Invalid registration date. Please enter a valid date before today.");
+            }
+        }
+
+        while (true) {
+            placeOfRegistration = DataInput.getString("Enter car place of registration:");
+            if (validatePlaceOfRegistration(placeOfRegistration, licensePlate)) {
+                break;
+            } else {
+                System.out.println("Invalid place of registration. Please enter a valid district.");
+            }
+        }
+        while (true) {
+            numberOfSeat = DataInput.getString("Enter car number of seat:");
+            if (validateNumberOfSeats(numberOfSeat)) {
+                break;
+            } else {
+                System.out.println("Invalid number of seats. Please enter a number between 4 and 36.");
+            }
+        }
+
+        return new Car(licensePlate, carOwner, phoneNumber, carBrand, price, registerDate, placeOfRegistration, numberOfSeat);
     }
 }
