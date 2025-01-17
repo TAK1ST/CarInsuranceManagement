@@ -1,10 +1,20 @@
 package Application.Service;
 
+import Application.Constant.Regex;
 import Application.Entity.Car;
 import Application.Entity.Insurance;
 import DataLayer.CarDAO.CarDAO;
 import DataLayer.DAOFactory;
 import DataLayer.InsuranceDAO.IInsuranceDAO;
+import Utils.DataInput;
+import static Utils.validation.ValidCarInput.getDistrictNameByCode;
+import static Utils.validation.ValidCarInput.validateCarBrand;
+import static Utils.validation.ValidCarInput.validateCarOwner;
+import static Utils.validation.ValidCarInput.validateLicensePlate;
+import static Utils.validation.ValidCarInput.validateNumberOfSeats;
+import static Utils.validation.ValidCarInput.validatePhoneNumber;
+import static Utils.validation.ValidCarInput.validateRegistrationDate;
+import static Utils.validation.ValidCarInput.validateVehicleValue;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,14 +24,14 @@ public class InsuranceService implements IService<Insurance> {
 
     private final IInsuranceDAO insuranceDAO;
     private final CarDAO carDAO;
-    private final Scanner scanner;
+    private final Scanner sc;
     private final SimpleDateFormat dateFormat;
 
     public InsuranceService(String inputDataFile) throws Exception {
         DAOFactory daoFactory = new DAOFactory(inputDataFile);
         this.insuranceDAO = daoFactory.insuranceDAO();
         this.carDAO = (CarDAO) daoFactory.carDAO();
-        this.scanner = new Scanner(System.in);
+        this.sc = new Scanner(System.in);
         this.dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     }
 
@@ -90,6 +100,7 @@ public class InsuranceService implements IService<Insurance> {
         String licensePlate = inputLicensePlate();
         Date establishedDate = inputEstablishedDate();
         int insurancePeriod = inputInsurancePeriod();
+        String insuranceOwner = inputInsuranceOwner();
 
         Car car = carDAO.getCarByLicensePlate(licensePlate);
         if (car == null) {
@@ -97,12 +108,14 @@ public class InsuranceService implements IService<Insurance> {
         }
 
         double vehicleValue = getVehicleValue(car);
-        if (vehicleValue <= 999) { // As per PDF requirement: value must be greater than 999
+        if (vehicleValue <= 999) {
             throw new Exception("Vehicle value must be greater than 999");
         }
 
+        // Validate all insurance data
+        validateInsuranceData(insuranceId, car, establishedDate, insurancePeriod, insuranceOwner);
+
         double insuranceFee = calculateInsuranceFee(vehicleValue, insurancePeriod);
-        String insuranceOwner = inputInsuranceOwner();
 
         return new Insurance(
                 insuranceId,
@@ -124,22 +137,29 @@ public class InsuranceService implements IService<Insurance> {
     }
 
     private double calculateInsuranceFee(double vehicleValue, int insurancePeriod) {
+        double baseRate;
         switch (insurancePeriod) {
             case 12:
-                return vehicleValue * 0.25; // 25% of vehicle value
+                baseRate = 0.025; // 2.5% per month
+                break;
             case 24:
-                return vehicleValue * 0.20 * 2; // 20% of vehicle value x 2
+                baseRate = 0.020; // 2% per month
+                break;
             case 36:
-                return vehicleValue * 0.15 * 3; // 15% of vehicle value x 3
+                baseRate = 0.015; // 1.5% per month
+                break;
             default:
                 throw new IllegalArgumentException("Invalid insurance period. Must be 12, 24, or 36 months.");
         }
+
+        // Calculate total fee based on vehicle value, rate, and period
+        return vehicleValue * baseRate * (insurancePeriod / 12.0);
     }
 
     private String inputInsuranceId() throws Exception {
         while (true) {
             System.out.print("Enter insurance ID (4 characters): ");
-            String id = scanner.nextLine().trim();
+            String id = sc.nextLine().trim();
 
             if (!id.matches("[A-Za-z0-9]{4}")) {
                 throw new Exception("Insurance ID must be exactly 4 alphanumeric characters");
@@ -154,13 +174,37 @@ public class InsuranceService implements IService<Insurance> {
             return id.toUpperCase();
         }
     }
+// Add method to validate additional insurance data:
+
+    private void validateInsuranceData(String insuranceId, Car car, Date establishedDate,
+            int insurancePeriod, String insuranceOwner) throws Exception {
+        if (insuranceId == null || !insuranceId.matches("[A-Za-z0-9]{4}")) {
+            throw new Exception("Invalid insurance ID format");
+        }
+
+        if (car == null) {
+            throw new Exception("Car information not found");
+        }
+
+        if (establishedDate == null || establishedDate.after(new Date())) {
+            throw new Exception("Invalid established date");
+        }
+
+        if (insurancePeriod != 12 && insurancePeriod != 24 && insurancePeriod != 36) {
+            throw new Exception("Invalid insurance period");
+        }
+
+        if (insuranceOwner == null || !insuranceOwner.matches("[a-zA-Z\\s]{2,25}")) {
+            throw new Exception("Invalid insurance owner name");
+        }
+    }
 
     private String inputLicensePlate() throws Exception {
         while (true) {
             System.out.print("Enter license plate: ");
-            String plate = scanner.nextLine().trim();
+            String plate = sc.nextLine().trim();
 
-            if (!plate.matches("[A-Z0-9-]+")) {
+            if (!plate.matches(Regex.REGEX_LICENSE_PLATE)) {
                 throw new Exception("Invalid license plate format");
             }
 
@@ -177,7 +221,7 @@ public class InsuranceService implements IService<Insurance> {
     private Date inputEstablishedDate() throws Exception {
         while (true) {
             System.out.print("Enter established date (MM/dd/yyyy): ");
-            String dateStr = scanner.nextLine().trim();
+            String dateStr = sc.nextLine().trim();
             try {
                 Date date = dateFormat.parse(dateStr);
                 Date now = new Date();
@@ -195,7 +239,7 @@ public class InsuranceService implements IService<Insurance> {
         while (true) {
             System.out.print("Enter insurance period (12/24/36 months): ");
             try {
-                int period = Integer.parseInt(scanner.nextLine().trim());
+                int period = Integer.parseInt(sc.nextLine().trim());
                 if (period != 12 && period != 24 && period != 36) {
                     throw new Exception("Insurance period must be 12, 24, or 36 months");
                 }
@@ -209,7 +253,7 @@ public class InsuranceService implements IService<Insurance> {
     private String inputInsuranceOwner() throws Exception {
         while (true) {
             System.out.print("Enter insurance owner name: ");
-            String owner = scanner.nextLine().trim();
+            String owner = sc.nextLine().trim();
 
             if (!owner.matches("[a-zA-Z\\s]{2,25}")) {
                 throw new Exception("Owner name must be 2-25 characters and contain only letters and spaces");
@@ -222,7 +266,7 @@ public class InsuranceService implements IService<Insurance> {
     private boolean continueAdding() {
         while (true) {
             System.out.print("Do you want to add another insurance statement? (Y/N): ");
-            String answer = scanner.nextLine().trim().toUpperCase();
+            String answer = sc.nextLine().trim().toUpperCase();
             if (answer.equals("Y") || answer.equals("N")) {
                 return answer.equals("Y");
             }
@@ -233,7 +277,7 @@ public class InsuranceService implements IService<Insurance> {
     private boolean retryOnError() {
         while (true) {
             System.out.print("Would you like to try again? (Y/N): ");
-            String answer = scanner.nextLine().trim().toUpperCase();
+            String answer = sc.nextLine().trim().toUpperCase();
             if (answer.equals("Y") || answer.equals("N")) {
                 return answer.equals("Y");
             }

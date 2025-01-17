@@ -14,5 +14,6 @@ public class Regex {
     public static final String REGEX_CHARACTER = "^[a-zA-Z]+$";
     public static final String REGEX_CHOICE = "\\d{1,10}";
     public static final String REGEX_PHONENUMBER = "^(09|03|07|08|05)\\d{8}$";
+    public static final String REGEX_LICENSE_PLATE = "^[5][0-9][P|S|X][1-9][0-9]{5}$";
 }
 

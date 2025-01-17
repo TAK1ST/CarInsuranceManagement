@@ -4,6 +4,15 @@
  */
 package Application.Entity;
 
+import Utils.DataInput;
+import static Utils.validation.ValidCarInput.getDistrictNameByCode;
+import static Utils.validation.ValidCarInput.validateCarBrand;
+import static Utils.validation.ValidCarInput.validateCarOwner;
+import static Utils.validation.ValidCarInput.validateLicensePlate;
+import static Utils.validation.ValidCarInput.validateNumberOfSeats;
+import static Utils.validation.ValidCarInput.validatePhoneNumber;
+import static Utils.validation.ValidCarInput.validateRegistrationDate;
+import static Utils.validation.ValidCarInput.validateVehicleValue;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -101,7 +110,8 @@ public class Car {
         this.numberOfSeat = numberOfSeat;
     }
 
-        
+   
+
     @Override
     public String toString() {
         // Trả về chuỗi với thông tin chi tiết về chiếc xe

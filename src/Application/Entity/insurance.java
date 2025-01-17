@@ -77,7 +77,7 @@ public class Insurance {
     } 
 
     public String getListLicensePlate() {
-        return car.getLicensePlate();  // Trả về biển số của chiếc xe trong bảo hiểm
+        return car.getLicensePlate(); 
     }
 
 }

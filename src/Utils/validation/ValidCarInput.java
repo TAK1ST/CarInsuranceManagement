@@ -5,7 +5,6 @@
 package Utils.validation;
 
 import static Application.Constant.Regex.REGEX_PHONENUMBER;
-import Application.Entity.Car;
 import java.util.Date;
 
 /**
