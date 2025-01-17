@@ -13,7 +13,7 @@ import java.util.Date;
  * @author asus
  */
 public class ValidCarInput {
-    
+
     public static boolean validateLicensePlate(String licensePlate) {
         if (licensePlate == null || licensePlate.isEmpty()) {
             return false;
@@ -73,16 +73,7 @@ public class ValidCarInput {
         return registerDate.before(currentDate);
     }
 
-    public static boolean validatePlaceOfRegistration(String placeOfRegistration, String licensePlate) {
-        if (placeOfRegistration == null || placeOfRegistration.isEmpty()) {
-            return false;
-        }
-
-        char districtCode = licensePlate.charAt(2);
-        return placeOfRegistration.equals(getDistrictNameByCode(districtCode));
-    }
-
-    private static String getDistrictNameByCode(char districtCode) {
+    public static String getDistrictNameByCode(char districtCode) {
         switch (districtCode) {
             case 'P':
                 return "Tan Binh";
@@ -106,30 +97,5 @@ public class ValidCarInput {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    public static boolean validateCarInput(Car car) {
-        if (!validateLicensePlate(car.getLicensePlate())) {
-            return false;
-        }
-        if (!validateCarOwner(car.getCarOwner())) {
-            return false;
-        }
-        if (!validatePhoneNumber(car.getPhoneNumber())) {
-            return false;
-        }
-        if (!validateCarBrand(car.getCarBrand())) {
-            return false;
-        }
-        if (!validateVehicleValue(car.getPrice())) {
-            return false;
-        }
-        if (!validateRegistrationDate(car.getRegisterDate())) {
-            return false;
-        }
-        if (!validatePlaceOfRegistration(car.getPlaceOfRegistration(), car.getLicensePlate())) {
-            return false;
-        }
-        return validateNumberOfSeats(car.getNumberOfSeat());
     }
 }

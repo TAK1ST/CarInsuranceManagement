@@ -4,8 +4,9 @@
  */
 package Application.Entity;
 
-import static Utils.validation.ValidCarInput.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -26,14 +27,14 @@ public class Car {
     }
 
     public Car(String licensePlate, String carOwner, String phoneNumber, String carBrand, int price, Date registerDate, String placeOfRegistration, String numberOfSeat) {
-            this.licensePlate = licensePlate;
-            this.carOwner = carOwner;
-            this.phoneNumber = phoneNumber;
-            this.carBrand = carBrand;
-            this.price = price;
-            this.registerDate = registerDate;
-            this.placeOfRegistration = placeOfRegistration;
-            this.numberOfSeat = numberOfSeat;
+        this.licensePlate = licensePlate;
+        this.carOwner = carOwner;
+        this.phoneNumber = phoneNumber;
+        this.carBrand = carBrand;
+        this.price = price;
+        this.registerDate = registerDate;
+        this.placeOfRegistration = placeOfRegistration;
+        this.numberOfSeat = numberOfSeat;
     }
 
     public String getLicensePlate() {
@@ -100,6 +101,7 @@ public class Car {
         this.numberOfSeat = numberOfSeat;
     }
 
+        
     @Override
     public String toString() {
         // Trả về chuỗi với thông tin chi tiết về chiếc xe

@@ -5,14 +5,25 @@
 package DataLayer.InsuranceDAO;
 
 import DataLayer.IProductDAO;
-import static Utils.validation.ValidationUtils.validInsuranceId;
+import java.util.List;
 
 /**
  *
  * @author asus
+ * @param <Insurance>
  */
-public interface IInsuranceDAO<Insurance> extends IProductDAO<Insurance>{
-    void loadDataFromFile() throws Exception ;   
+public interface IInsuranceDAO<Insurance> extends IProductDAO<Insurance> {
+    void loadDataFromFile() throws Exception;
 
+    List<Insurance> getInsurancesByYear(int year) throws Exception;
+    
+    List<Insurance> getInsurancesById(int year) throws Exception;
 
-}
+    List<Insurance> getAllInsurances() throws Exception;
+
+    boolean hasInsurance(String licensePlate) throws Exception;
+
+    void saveToFile(String filePath) throws Exception;
+
+    void loadDataFromFile(String filePath) throws Exception;
+    }

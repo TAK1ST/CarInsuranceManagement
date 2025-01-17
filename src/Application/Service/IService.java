@@ -16,4 +16,5 @@ public interface IService<T> {
     void printList() throws Exception ;   
     List<T> getList() throws Exception;    
     void add(T obj) throws Exception;     
+    T getCarByLicensePlate(String licensePlate) throws Exception;
 }

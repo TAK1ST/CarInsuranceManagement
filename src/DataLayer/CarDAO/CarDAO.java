@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static Application.Constant.DateFormat.dateFormat;
+import Application.Entity.Insurance;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -94,44 +95,44 @@ public class CarDAO implements ICarDAO<Car> {
         return carList;
     }
 
-@Override
-public void saveToFile(String filePath) throws Exception {
-    try {
-        // List to hold the formatted car data
-        List<String> dataToWrite = new ArrayList<>();
+    @Override
+    public void saveToFile(String filePath) throws Exception {
+        try {
+            // List to hold the formatted car data
+            List<String> dataToWrite = new ArrayList<>();
 
-        // Format each car's details and add to dataToWrite list
-        for (Car car : carList) {
-            String line = String.format("%s,%s,%s,%s,%d,%s,%s,%s",
-                    car.getLicensePlate(),
-                    car.getCarOwner(),
-                    car.getPhoneNumber(),
-                    car.getCarBrand(),
-                    car.getPrice(),
-                    dateFormat.format(car.getRegisterDate()),
-                    car.getPlaceOfRegistration(),
-                    car.getNumberOfSeat()
-            );
-            dataToWrite.add(line);
-        }
-
-        // Use the provided file path
-        File file = new File(filePath);
-
-        // Create a BufferedWriter to write to the file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            // Write each line from dataToWrite to the file
-            for (String line : dataToWrite) {
-                writer.write(line);
-                writer.newLine(); // Add a newline after each line of data
+            // Format each car's details and add to dataToWrite list
+            for (Car car : carList) {
+                String line = String.format("%s,%s,%s,%s,%d,%s,%s,%s",
+                        car.getLicensePlate(),
+                        car.getCarOwner(),
+                        car.getPhoneNumber(),
+                        car.getCarBrand(),
+                        car.getPrice(),
+                        dateFormat.format(car.getRegisterDate()),
+                        car.getPlaceOfRegistration(),
+                        car.getNumberOfSeat()
+                );
+                dataToWrite.add(line);
             }
-        } catch (IOException e) {
-            throw new Exception("Error while writing data to file: " + e.getMessage(), e);
+
+            // Use the provided file path
+            File file = new File(filePath);
+
+            // Create a BufferedWriter to write to the file
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                // Write each line from dataToWrite to the file
+                for (String line : dataToWrite) {
+                    writer.write(line);
+                    writer.newLine(); // Add a newline after each line of data
+                }
+            } catch (IOException e) {
+                throw new Exception("Error while writing data to file: " + e.getMessage(), e);
+            }
+        } catch (Exception e) {
+            throw new Exception("An error occurred while saving data: " + e.getMessage(), e);
         }
-    } catch (Exception e) {
-        throw new Exception("An error occurred while saving data: " + e.getMessage(), e);
     }
-}
 
     public Car getCarByLicensePlate(String licensePlate) {
         if (carList.isEmpty()) {
@@ -145,4 +146,12 @@ public void saveToFile(String filePath) throws Exception {
         }
         return null;
     }
+
+    public void deleteCar(Car car) throws Exception {
+        if (!carList.remove(car)) {
+            throw new Exception("Failed to delete car");
+        }
+    }
+
+
 }

@@ -7,6 +7,7 @@ package Application.Service;
 import Application.Entity.Car;
 import DataLayer.CarDAO.CarDAO;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -40,5 +41,14 @@ public class CarService implements IService<Car> {
 
     public void saveToFile(String filePath) throws Exception {
         carDAO.saveToFile(filePath);
+    }
+
+    @Override
+    public Car getCarByLicensePlate(String licensePlate) {
+        return carDAO.getCarByLicensePlate(licensePlate);
+    }
+
+    public void deleteCar(Car car) throws Exception {
+        carDAO.deleteCar(car);
     }
 }

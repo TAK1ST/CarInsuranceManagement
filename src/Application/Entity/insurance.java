@@ -1,7 +1,6 @@
 
 package Application.Entity;
 
-import Utils.validation.ValidationUtils;
 import java.util.Date;
 
 /**
@@ -61,7 +60,7 @@ public class Insurance {
         this.insurancePeriod = insurancePeriod;
     }
 
-    public String getfee() {
+    public String getFee() {
         return fee;
     }
 
@@ -76,4 +75,9 @@ public class Insurance {
     public void setInsuranceOwner(String insuranceOwner) {
         this.insuranceOwner = insuranceOwner;
     } 
+
+    public String getListLicensePlate() {
+        return car.getLicensePlate();  // Trả về biển số của chiếc xe trong bảo hiểm
+    }
+
 }

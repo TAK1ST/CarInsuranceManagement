@@ -12,7 +12,7 @@ public class Regex {
     public static final String REGEX_LENGHT = "^.{1,9}$";
     public static final String REGEX_LENGHT_INSURANCEID = "^\\d{4}$";
     public static final String REGEX_CHARACTER = "^[a-zA-Z]+$";
-    public static final String REGEX_CHOICE = "\\d{1,9}";
+    public static final String REGEX_CHOICE = "\\d{1,10}";
     public static final String REGEX_PHONENUMBER = "^(09|03|07|08|05)\\d{8}$";
 }
 

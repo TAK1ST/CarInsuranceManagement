@@ -48,7 +48,7 @@ public class DataInput {
         Scanner sc = new Scanner(System.in);
         System.out.print(displayMessage);
         s = sc.nextLine();
-        return s;
+        return s.trim();
     }
 
     public static String getString() {
