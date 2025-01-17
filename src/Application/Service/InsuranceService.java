@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InsuranceService implements IService<Insurance> {
+
     private final IInsuranceDAO insuranceDAO;
     private final CarDAO carDAO;
     private final Scanner scanner;
@@ -19,7 +20,7 @@ public class InsuranceService implements IService<Insurance> {
     public InsuranceService(String inputDataFile) throws Exception {
         DAOFactory daoFactory = new DAOFactory(inputDataFile);
         this.insuranceDAO = daoFactory.insuranceDAO();
-        this.carDAO = (CarDAO) daoFactory.carDAO(); 
+        this.carDAO = (CarDAO) daoFactory.carDAO();
         this.scanner = new Scanner(System.in);
         this.dateFormat = new SimpleDateFormat("MM/dd/yyyy");
     }
@@ -89,34 +90,50 @@ public class InsuranceService implements IService<Insurance> {
         String licensePlate = inputLicensePlate();
         Date establishedDate = inputEstablishedDate();
         int insurancePeriod = inputInsurancePeriod();
-        
+
         Car car = carDAO.getCarByLicensePlate(licensePlate);
         if (car == null) {
             throw new Exception("Car not found with license plate: " + licensePlate);
         }
 
-        double vehicleValue = car.getVehicleValue();
-        if (vehicleValue <= 0) {
-            throw new Exception("Invalid vehicle value");
+        double vehicleValue = getVehicleValue(car);
+        if (vehicleValue <= 999) { // As per PDF requirement: value must be greater than 999
+            throw new Exception("Vehicle value must be greater than 999");
         }
 
         double insuranceFee = calculateInsuranceFee(vehicleValue, insurancePeriod);
         String insuranceOwner = inputInsuranceOwner();
 
         return new Insurance(
-            insuranceId,
-            car,
-            establishedDate,
-            insurancePeriod,
-            String.format("%.2f", insuranceFee),
-            insuranceOwner
+                insuranceId,
+                car,
+                establishedDate,
+                insurancePeriod,
+                String.format("%.2f", insuranceFee),
+                insuranceOwner
         );
     }
 
+    private double getVehicleValue(Car car) {
+        if (car == null) {
+            throw new IllegalArgumentException("Car cannot be null");
+        }
+
+        // In the Car class, the price field represents the vehicle value
+        return car.getPrice();
+    }
+
     private double calculateInsuranceFee(double vehicleValue, int insurancePeriod) {
-        double baseRate = 0.1; // 10% of vehicle value per year
-        double periodMultiplier = insurancePeriod / 12.0;
-        return vehicleValue * baseRate * periodMultiplier;
+        switch (insurancePeriod) {
+            case 12:
+                return vehicleValue * 0.25; // 25% of vehicle value
+            case 24:
+                return vehicleValue * 0.20 * 2; // 20% of vehicle value x 2
+            case 36:
+                return vehicleValue * 0.15 * 3; // 15% of vehicle value x 3
+            default:
+                throw new IllegalArgumentException("Invalid insurance period. Must be 12, 24, or 36 months.");
+        }
     }
 
     private String inputInsuranceId() throws Exception {
@@ -226,11 +243,11 @@ public class InsuranceService implements IService<Insurance> {
 
     private String formatInsuranceInfo(Insurance insurance) {
         return String.format("Insurance ID: %s | License Plate: %s | Owner: %s | Established: %s | Period: %d months | Fee: $%s",
-            insurance.getInsuranceId(),
-            insurance.getCar().getLicensePlate(),
-            insurance.getInsuranceOwner(),
-            dateFormat.format(insurance.getEstablishedDate()),
-            insurance.getInsurancePeriod(),
-            insurance.getFee());
+                insurance.getInsuranceId(),
+                insurance.getCar().getLicensePlate(),
+                insurance.getInsuranceOwner(),
+                dateFormat.format(insurance.getEstablishedDate()),
+                insurance.getInsurancePeriod(),
+                insurance.getFee());
     }
 }

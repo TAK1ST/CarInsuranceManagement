@@ -1,23 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package DataLayer.InsuranceDAO;
 
 import DataLayer.IProductDAO;
 import java.util.List;
 
 /**
- *
- * @author asus
- * @param <Insurance>
+ * Interface for Insurance Data Access Object.
+ * @param <Insurance> 
  */
 public interface IInsuranceDAO<Insurance> extends IProductDAO<Insurance> {
     void loadDataFromFile() throws Exception;
 
     List<Insurance> getInsurancesByYear(int year) throws Exception;
     
-    List<Insurance> getInsurancesById(int year) throws Exception;
+    List<Insurance> getInsurancesById(String id) throws Exception;
 
     List<Insurance> getAllInsurances() throws Exception;
 
@@ -25,5 +20,4 @@ public interface IInsuranceDAO<Insurance> extends IProductDAO<Insurance> {
 
     void saveToFile(String filePath) throws Exception;
 
-    void loadDataFromFile(String filePath) throws Exception;
-    }
+}

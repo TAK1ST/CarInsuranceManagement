@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DataLayer.CarDAO;
 
 import Application.Entity.Car;
@@ -10,24 +6,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import static Application.Constant.DateFormat.dateFormat;
-import Application.Entity.Insurance;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- *
- * @author asus
+ * CarDAO class to manage car data.
  */
 public class CarDAO implements ICarDAO<Car> {
 
-    IFileManagement<Car> fileManager;
-    List<Car> carList = new ArrayList<>();
-
-    public CarDAO() {
-        this.carList = new ArrayList<>();
-    }
+    private final IFileManagement<Car> fileManager;
+    private final List<Car> carList;
 
     public CarDAO(IFileManagement<Car> fileManager) throws Exception {
         this.fileManager = fileManager;
@@ -35,7 +25,6 @@ public class CarDAO implements ICarDAO<Car> {
         loadDataFromFile();
     }
 
-    //--------------------------------------------------------------------------------
     @Override
     public void loadDataFromFile() throws Exception {
         try {
@@ -98,10 +87,8 @@ public class CarDAO implements ICarDAO<Car> {
     @Override
     public void saveToFile(String filePath) throws Exception {
         try {
-            // List to hold the formatted car data
             List<String> dataToWrite = new ArrayList<>();
 
-            // Format each car's details and add to dataToWrite list
             for (Car car : carList) {
                 String line = String.format("%s,%s,%s,%s,%d,%s,%s,%s",
                         car.getLicensePlate(),
@@ -116,15 +103,12 @@ public class CarDAO implements ICarDAO<Car> {
                 dataToWrite.add(line);
             }
 
-            // Use the provided file path
             File file = new File(filePath);
 
-            // Create a BufferedWriter to write to the file
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                // Write each line from dataToWrite to the file
                 for (String line : dataToWrite) {
                     writer.write(line);
-                    writer.newLine(); // Add a newline after each line of data
+                    writer.newLine();
                 }
             } catch (IOException e) {
                 throw new Exception("Error while writing data to file: " + e.getMessage(), e);
@@ -152,6 +136,4 @@ public class CarDAO implements ICarDAO<Car> {
             throw new Exception("Failed to delete car");
         }
     }
-
-
 }

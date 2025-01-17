@@ -1,86 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package PresentationLayer.UI;
 
 import static Application.Constant.DateFormat.dateFormat;
 import Application.Entity.Car;
-import Application.Service.CarService;
+import Application.Entity.Insurance;
 import Application.Service.IService;
+import Application.Service.InsuranceService;
 import DataLayer.FileManagement;
-import static PresentationLayer.UI.Menu.getUserChoice;
+import PresentationLayer.UI.IMenu;
 import Utils.DataInput;
-import Utils.validation.ValidCarInput;
-import static Utils.validation.ValidCarInput.*;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
-/**
- *
- * @author asus
- */
+
 public class CarMenu implements IMenu {
 
     private final IService<Car> service;
+    private final InsuranceService insuranceService; // Add this field
 
     public CarMenu(IService<Car> service) {
         this.service = service;
-    }
-
-    public void displayCarMenu() {
-        List<String> menuItems = Arrays.asList(
-                "Add new car",
-                "Find a car by license plate",
-                "Update car information",
-                "Delete car information",
-                "Add an insurance statement",
-                "List of insurance statements",
-                "Report uninsured cars",
-                "Save data",
-                "Quit"
-        );
-        System.out.println(
-                "==========Car Management==========");
-        int count = 1;
-        for (String item : menuItems) {
-            System.out.println(count++ + "." + item);
-        }
-        int attempts = 0;
-        while (attempts < 3) {
-            int userChoice = getUserChoice();
-
-            if (userChoice >= 1 && userChoice <= 9) {
-                handleOption(userChoice);
-                break;
-            } else {
-                System.out.println("Invalid option. Please enter a valid option [1-9].");
-                attempts++;
-                if (attempts >= 3) {
-                    System.out.println("Too many invalid attempts. Exiting...");
-                    return;
-                }
-            }
-        }
-    }
-
-    public void addNewCar() {
-        boolean stop = true;
-        while (stop) {
-            try {
-                Car newCar = getCar();
-                service.add(newCar);
-                service.getList();
-                System.out.println(">>Car added successfully.");
-                System.out.println("Do you want to enter another vehicle? (yes/no): ");
-                String response = DataInput.getString();
-                if (!response.equalsIgnoreCase("yes")) {
-                    stop = false;
-                }
-            } catch (Exception e) {
-                System.out.println(">>" + e.getMessage());
-            }
+        try {
+            this.insuranceService = new InsuranceService(FileManagement.carInputFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize InsuranceService: " + e.getMessage());
         }
     }
 
@@ -97,16 +37,18 @@ public class CarMenu implements IMenu {
                     break;
                 case 3:
                     updateCarInformation();
-
                     break;
                 case 4:
                     deleteCarInformation();
                     break;
                 case 5:
+                    addInsuranceStatement();
                     break;
                 case 6:
+                    listInsuranceStatements();
                     break;
                 case 7:
+                    reportUninsuredCars();
                     break;
                 case 8:
                     saveData();
@@ -124,6 +66,77 @@ public class CarMenu implements IMenu {
         }
     }
 
+    // Add new methods to handle insurance-related options
+    private void addInsuranceStatement() {
+        try {
+            insuranceService.addInsuranceStatement();
+        } catch (Exception e) {
+            System.out.println("Error adding insurance statement: " + e.getMessage());
+        }
+    }
+
+    private void listInsuranceStatements() {
+        try {
+            System.out.print("Enter year to list insurance statements (YYYY): ");
+            int year = DataInput.getIntegerNumber();
+
+            System.out.println("\nReport : INSURANCE STATEMENTS");
+            System.out.println("From : 01/01/" + year + " To: 12/31/" + year);
+            System.out.println("Sorted by: Established Date");
+            System.out.println("Sort type : ASC");
+            System.out.println("\nNo. Insurance Id  Established Date  License plate  Customer  Insurance period  Insurance fees");
+            System.out.println("-------------------------------------------------------------------------------");
+
+            List<Insurance> statements = insuranceService.getInsuranceStatementsForYear(year);
+            if (statements.isEmpty()) {
+                System.out.println("There are no statements in this year");
+            } else {
+                int count = 1;
+                for (Insurance insurance : statements) {
+                    System.out.printf("%d   %-11s  %-15s  %-12s  %-8s  %-16d  $%s%n",
+                            count++,
+                            insurance.getInsuranceId(),
+                            dateFormat.format(insurance.getEstablishedDate()),
+                            insurance.getCar().getLicensePlate(),
+                            insurance.getInsuranceOwner(),
+                            insurance.getInsurancePeriod(),
+                            insurance.getFee());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error listing insurance statements: " + e.getMessage());
+        }
+    }
+
+    private void reportUninsuredCars() {
+        try {
+            System.out.println("\nReport: UNINSURED CARS");
+            System.out.println("Sorted by : Vehicle value");
+            System.out.println("Sort type : DESC");
+            System.out.println("\nNo. License plate  Registration Date  Vehicle Owner  Brand  Number of seats  Value of vehicle");
+            System.out.println("--------------------------------------------------------------------------------");
+
+            List<Car> uninsuredCars = insuranceService.getUninsuredCars();
+            if (uninsuredCars.isEmpty()) {
+                System.out.println("No information available");
+            } else {
+                int count = 1;
+                for (Car car : uninsuredCars) {
+                    System.out.printf("%d   %-12s  %-16s  %-13s  %-5s  %-14s  $%,d%n",
+                            count++,
+                            car.getLicensePlate(),
+                            dateFormat.format(car.getRegisterDate()),
+                            car.getCarOwner(),
+                            car.getCarBrand(),
+                            car.getNumberOfSeat(),
+                            car.getPrice());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error generating uninsured cars report: " + e.getMessage());
+        }
+    }
+
     @Override
     public void saveData() {
         try {
@@ -131,199 +144,10 @@ public class CarMenu implements IMenu {
                 CarService carService = (CarService) service;
                 carService.saveToFile(FileManagement.carInputFile);
             }
-
+            // Also save insurance data
+            insuranceService.saveToFile(FileManagement.insuranceInputFile);
         } catch (Exception e) {
             System.out.println("Error saving data: " + e.getMessage());
-        }
-    }
-
-    //redundance should feed after complete lab211, should you generic function.
-    public Car getCar() throws Exception {
-        String licensePlate;
-        String carOwner;
-        String phoneNumber;
-        String carBrand;
-        int price;
-        Date registerDate;
-        String placeOfRegistration;
-        String numberOfSeat;
-
-        while (true) {
-            licensePlate = DataInput.getString("Enter car license plate:");
-            if (validateLicensePlate(licensePlate)) {
-                break;
-            } else {
-                System.out.println("Invalid license plate. Please try again.");
-            }
-        }
-
-        while (true) {
-            carOwner = DataInput.getString("Enter car owner:");
-            if (validateCarOwner(carOwner)) {
-                break;
-            } else {
-                System.out.println("Invalid car owner. Please try again.");
-            }
-        }
-
-        while (true) {
-            phoneNumber = DataInput.getString("Enter phone number:");
-            if (validatePhoneNumber(phoneNumber)) {
-                break;
-            } else {
-                System.out.println("Invalid phone number. Please try again.");
-            }
-        }
-
-        while (true) {
-            carBrand = DataInput.getString("Enter car brand:");
-            if (validateCarBrand(carBrand)) {
-                break;
-            } else {
-                System.out.println("Invalid car brand. Please try again.");
-            }
-        }
-
-        while (true) {
-            price = DataInput.getIntegerNumber("Enter car price:");
-            if (validateVehicleValue(price)) {
-                break;
-            } else {
-                System.out.println("Invalid vehicle price. Please enter a value greater than 999.");
-            }
-        }
-
-        while (true) {
-            registerDate = DataInput.getDate("Enter car register date:");
-            if (validateRegistrationDate(registerDate)) {
-                break;
-            } else {
-                System.out.println("Invalid registration date. Please enter a valid date before today.");
-            }
-        }
-
-        char distinctCode = licensePlate.charAt(2);
-        placeOfRegistration = getDistrictNameByCode(distinctCode);
-
-        while (true) {
-            numberOfSeat = DataInput.getString("Enter car number of seat:");
-            if (validateNumberOfSeats(numberOfSeat)) {
-                break;
-            } else {
-                System.out.println("Invalid number of seats. Please enter a number between 4 and 36.");
-            }
-        }
-
-        return new Car(licensePlate, carOwner, phoneNumber, carBrand, price, registerDate, placeOfRegistration, numberOfSeat);
-    }
-
-    public void findCarByLicensePlate() {
-        try {
-            String licensePlate = DataInput.getString("Enter license plate to search: ");
-            Car car = ((CarService) service).getCarByLicensePlate(licensePlate);
-
-            if (car != null) {
-                System.out.println("Vehicle Details:");
-                System.out.println("-----------------------------------------------------");
-                System.out.println("License plate: " + car.getLicensePlate());
-                System.out.println("Owner: " + car.getCarOwner());
-                System.out.println("Phone: " + car.getPhoneNumber());
-                System.out.println("Car brand: " + car.getCarBrand());
-                System.out.println("Value of vehicle: " + String.format("%,d", car.getPrice()));
-                System.out.println("Number of seats: " + car.getNumberOfSeat());
-                System.out.println("Registration date: " + dateFormat.format(car.getRegisterDate()));
-                System.out.println("-----------------------------------------------------");
-            } else {
-                System.out.println("No one matches the search criteria!");
-            }
-
-            System.out.println("Do you want to search for another car? (yes/no): ");
-            String response = DataInput.getString();
-            if (response.equalsIgnoreCase("yes")) {
-                findCarByLicensePlate();
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    public void updateCarInformation() {
-        try {
-            String licensePlate = DataInput.getString("Enter license plate to update: ");
-            Car car = ((CarService) service).getCarByLicensePlate(licensePlate);
-
-            if (car != null) {
-                System.out.println("Current car information:");
-                System.out.println(car);
-                System.out.println("\nEnter new information (press Enter to keep current value):");
-
-                String newOwner = DataInput.getString("Enter new car owner (current: " + car.getCarOwner() + "): ");
-                if (!newOwner.isEmpty() && ValidCarInput.validateCarOwner(newOwner)) {
-                    car.setCarOwner(newOwner);
-                }
-
-                String newPhone = DataInput.getString("Enter new phone number (current: " + car.getPhoneNumber() + "): ");
-                if (!newPhone.isEmpty() && ValidCarInput.validatePhoneNumber(newPhone)) {
-                    car.setPhoneNumber(newPhone);
-                }
-
-                String newBrand = DataInput.getString("Enter new car brand (current: " + car.getCarBrand() + "): ");
-                if (!newBrand.isEmpty() && ValidCarInput.validateCarBrand(newBrand)) {
-                    car.setCarBrand(newBrand);
-                }
-
-                String newSeats = DataInput.getString("Enter new number of seats (current: " + car.getNumberOfSeat() + "): ");
-                if (!newSeats.isEmpty() && ValidCarInput.validateNumberOfSeats(newSeats)) {
-                    car.setNumberOfSeat(newSeats);
-                }
-
-                System.out.println("Car information updated successfully!");
-                saveData();
-            } else {
-                System.out.println("This vehicle does not exist.");
-            }
-
-            System.out.println("Do you want to update another car? (yes/no): ");
-            String response = DataInput.getString();
-            if (response.equalsIgnoreCase("yes")) {
-                updateCarInformation();
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
-    public void deleteCarInformation() {
-        try {
-            String licensePlate = DataInput.getString("Enter license plate to delete: ");
-            Car car = ((CarService) service).getCarByLicensePlate(licensePlate);
-
-            if (car != null) {
-                // TODO: Add check for insurance statements when that functionality is implemented
-                System.out.println("Vehicle Details:");
-                System.out.println("-----------------------------------------------------");
-                System.out.println("License plate: " + car.getLicensePlate());
-                System.out.println("Owner: " + car.getCarOwner());
-                System.out.println("Phone: " + car.getPhoneNumber());
-                System.out.println("Car brand: " + car.getCarBrand());
-                System.out.println("Value of vehicle: " + String.format("%,d", car.getPrice()));
-                System.out.println("Number of seats: " + car.getNumberOfSeat());
-                System.out.println("Registration date: " + dateFormat.format(car.getRegisterDate()));
-                System.out.println("-----------------------------------------------------");
-
-                System.out.print("Are you sure you want to delete this registration? (Y/N): ");
-                String confirmation = DataInput.getString();
-
-                if (confirmation.equalsIgnoreCase("Y")) {
-                    ((CarService) service).deleteCar(car);
-                    System.out.println("The vehicle information has been successfully deleted.");
-                    saveData();
-                }
-            } else {
-                System.out.println("This vehicle has not registered yet.");
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
         }
     }
 }

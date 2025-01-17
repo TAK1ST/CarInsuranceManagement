@@ -13,11 +13,11 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class InsuranceDAO implements IInsuranceDAO<Insurance> {
+public class InsuranceDAO implements IInsuranceDAO<Insurance> {
 
     private final IFileManagement<Insurance> fileManagement;
     private final List<Insurance> insuranceList;
-    private final CarDAO carDAO;
+    private CarDAO carDAO;
 
     public InsuranceDAO(IFileManagement<Insurance> fileManagement, CarDAO carDAO) throws Exception {
         this.fileManagement = fileManagement;
@@ -115,6 +115,7 @@ public final class InsuranceDAO implements IInsuranceDAO<Insurance> {
         return result;
     }
 
+    @Override
     public List<Insurance> getInsurancesById(String id) throws Exception {
         if (id == null || id.trim().isEmpty()) {
             throw new Exception("Insurance ID cannot be empty");
@@ -193,6 +194,14 @@ public final class InsuranceDAO implements IInsuranceDAO<Insurance> {
                 insurance.getFee(),
                 insurance.getInsuranceOwner()
         );
+    }
+
+    @Override
+    public List<Insurance> getList() throws Exception {
+        if (insuranceList.isEmpty()) {
+            throw new Exception("Car list is empty.");
+        }
+        return insuranceList;
     }
 
     private Car getCarByLicensePlate(String licensePlate) throws Exception {
