@@ -3,31 +3,22 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Service/IService.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Entity/Insurance.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/IFileManagement.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Utils/validation/ValidationUtils.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/CarDAO/ICarDAO.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/CarDAO/CarDAO.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/IProductDAO.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Constant/Regex.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/FileManagement.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Utils/DataInput.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/InsuranceDAO/IInsuranceDAO.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/TestProgram.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Entity/Car.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Utils/StartUtils.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/Program.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Utils/validation/ValidCarInput.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/DisplayTesting.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Service/CarService.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/InsuranceDAO/InsuranceDAO.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/IMenu.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/IDAOFactory.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/CarMenu.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/Data/CarData.txt</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Entity/Insurance.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Constant/DateFormat.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/DAOFactory.java</file>
-            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Service/InsuranceService.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/CRUD.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Utils/validation/ValidInsuranceInput.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/DataLayer/CarDAO/CarDAO.java</file>
             <file>file:/E:/JavaTrain/CarInsuranceManagement/src/PresentationLayer/UI/Menu.java</file>
+            <file>file:/E:/JavaTrain/CarInsuranceManagement/src/Application/Constant/Regex.java</file>
         </group>
     </open-files>
 </project-private>

@@ -11,5 +11,5 @@ import java.text.SimpleDateFormat;
  * @author asus
  */
 public class DateFormat {
-    public static SimpleDateFormat  dateFormat = new SimpleDateFormat("MM/dd/yyyy" );
+    public static SimpleDateFormat  dateFormat = new SimpleDateFormat("dd/MM/yyyy" );
 }

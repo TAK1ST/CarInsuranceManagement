@@ -4,7 +4,10 @@
  */
 package Utils.validation;
 
+import static Application.Constant.Regex.REGEX_DISTINCT;
 import static Application.Constant.Regex.REGEX_PHONENUMBER;
+import Application.Entity.Car;
+import static java.time.Instant.now;
 import java.util.Date;
 
 /**
@@ -34,8 +37,7 @@ public class ValidCarInput {
     }
 
     private static boolean isValidDistrictCode(char districtCode) {
-        String validDistricts = "PSTXV";
-        return validDistricts.indexOf(districtCode) >= 0;
+        return String.valueOf(districtCode).matches(REGEX_DISTINCT);
     }
 
     public static boolean validateCarOwner(String carOwner) {
@@ -59,7 +61,7 @@ public class ValidCarInput {
         return carBrand.length() >= 5 && carBrand.length() <= 12;
     }
 
-    public static boolean validateVehicleValue(int value) {
+    public static boolean validateVehicleValue(long value) {
         return value > 999;
     }
 
@@ -89,12 +91,24 @@ public class ValidCarInput {
         }
     }
 
-    public static boolean validateNumberOfSeats(String numberOfSeat) {
-        try {
-            int seats = Integer.parseInt(numberOfSeat);
-            return seats >= 4 && seats <= 36;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    public static boolean validateNumberOfSeats(int seats) {
+        return seats >= 4 && seats <= 36;
+    }
+
+    public static boolean validateCar(Car car) {
+        return validateLicensePlate(car.getLicensePlate())
+                && validateCarOwner(car.getCarOwner())
+                && validatePhoneNumber(car.getPhoneNumber())
+                && validateCarBrand(car.getCarBrand())
+                && validateVehicleValue(car.getVehicleValue())
+                && validateRegistrationDate(car.getRegistrationDate())
+                && validateNumberOfSeats(car.getNumberOfSeats());
+    }
+
+    public static boolean validateCarUpdate(Car car) {
+        return validateCarOwner(car.getCarOwner())
+                && validatePhoneNumber(car.getPhoneNumber())
+                && validateCarBrand(car.getCarBrand())
+                && validateNumberOfSeats(car.getNumberOfSeats());
     }
 }

@@ -4,14 +4,16 @@
  */
 package DataLayer;
 
-import java.util.List;
-
 /**
  *
  * @author asus
- * @param <T>
  */
-public interface IProductDAO<T> {
-    void addNew(T obj) throws Exception;
-    List<T> getList() throws Exception;
+public interface IProductDAO <T>{
+
+    boolean add(T obj);
+
+    void saveToFile();
+
+    void loadFromFile();
+
 }

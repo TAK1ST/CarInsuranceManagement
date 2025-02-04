@@ -4,8 +4,6 @@
  */
 package Application.Service;
 
-import java.util.List;
-
 /**
  *
  * @author asus
@@ -13,8 +11,6 @@ import java.util.List;
  */
 public interface IService<T> {
     //repo
-    void printList() throws Exception ;   
-    List<T> getList() throws Exception;    
-    void add(T obj) throws Exception;     
-    T getCarByLicensePlate(String licensePlate) throws Exception;
+    boolean addNew(T obj) throws Exception;     
+    void saveData();
 }

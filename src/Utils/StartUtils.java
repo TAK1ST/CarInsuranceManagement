@@ -4,34 +4,26 @@
  */
 package Utils;
 
-import Application.Entity.Car;
-import Application.Service.CarService;
-import Application.Service.IService;
-import DataLayer.CarDAO.CarDAO;
-import DataLayer.FileManagement;
-import static DataLayer.FileManagement.loadFile;
-import DataLayer.IFileManagement;
-import PresentationLayer.UI.CarMenu;
+import PresentationLayer.UI.Menu;
 
 /**
  *
  * @author asus
  */
+
 public class StartUtils {
-
     public static void start() throws Exception {
-        try {
-            loadFile(FileManagement.carInputFile);
-
-            IFileManagement<Car> fileManager = new FileManagement<>(FileManagement.carInputFile);
-            CarDAO carDAO = new CarDAO(fileManager);
-            IService<Car> carService = new CarService(carDAO);
-
-            CarMenu menu = new CarMenu(carService);
-            menu.displayCarMenu();
-
-        } catch (Exception e) {
-            System.out.println("Error starting application: " + e.getMessage());
+        boolean running = true;
+        while (running) {
+            // use try can implement try again, limit avoid throw exception in getIntegerNumber.
+            try {
+            Menu.displayMenu();
+            int option = DataInput.getIntegerNumber();
+            running = Menu.handleChoice(option);
+            }  catch(NumberFormatException e)
+            {
+                System.out.println("Only input number 1-9, please choose again!");
+            }
         }
     }
 }

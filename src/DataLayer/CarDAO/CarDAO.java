@@ -1,139 +1,96 @@
 package DataLayer.CarDAO;
 
 import Application.Entity.Car;
-import DataLayer.IFileManagement;
+import DataLayer.InsuranceDAO.InsuranceDAO;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import static Application.Constant.DateFormat.dateFormat;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
-/**
- * CarDAO class to manage car data.
- */
-public class CarDAO implements ICarDAO<Car> {
+public final class CarDAO implements ICarDAO {
 
-    private final IFileManagement<Car> fileManager;
-    private final List<Car> carList;
+    private List<Car> cars;
+    public static final String CAR_FILE = "./src/DataLayer/Data/CarData.dat";
 
-    public CarDAO(IFileManagement<Car> fileManager) throws Exception {
-        this.fileManager = fileManager;
-        this.carList = new ArrayList<>();
-        loadDataFromFile();
+    public CarDAO() {
+        cars = new ArrayList<>();
+        loadFromFile();
     }
 
     @Override
-    public void loadDataFromFile() throws Exception {
-        try {
-            List<String> carData = fileManager.readDataFromFile();
+    public boolean add(Car car) {
+        if (findCarByLicensePlate(car.getLicensePlate()) != null) {
+            return false;
+        }
+        return cars.add(car);
+    }
 
-            if (carData == null || carData.isEmpty()) {
-                System.out.println("File empty, add data please");
-                return;
+    @Override
+    public Car findCarByLicensePlate(String licensePlate) {
+        return cars.stream()
+                .filter(c -> c.getLicensePlate().equals(licensePlate))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public boolean updateCar(Car car) {
+        for (int i = 0; i < cars.size(); i++) {
+            if (cars.get(i).getLicensePlate().equals(car.getLicensePlate())) {
+                cars.set(i, car);
+                return true;
             }
+        }
+        return false;
+    }
 
-            for (String car : carData) {
-                if (car == null || car.trim().isEmpty()) {
-                    continue;
-                }
+    @Override
+    public boolean deleteCar(String licensePlate) {
+        return cars.removeIf(c -> c.getLicensePlate().equals(licensePlate));
+    }
 
-                try {
-                    String[] temp = car.split(",");
-                    if (temp.length < 8) {
-                        System.out.println("Data length input invalid: " + car);
-                        continue;
-                    }
+    @Override
+    public List<Car> getAllCars() {
+        return new ArrayList<>(cars);
+    }
 
-                    String licensePlate = temp[0].trim();
-                    String carOwner = temp[1].trim();
-                    String phoneNumber = temp[2].trim();
-                    String carBrand = temp[3].trim();
-                    int price = Integer.parseInt(temp[4].trim());
-                    Date registerDate = dateFormat.parse(temp[5].trim());
-                    String placeOfRegistration = temp[6].trim();
-                    String numberOfSeat = temp[7].trim();
-
-                    Car newCar = new Car(licensePlate, carOwner, phoneNumber, carBrand,
-                            price, registerDate, placeOfRegistration, numberOfSeat);
-                    addNew(newCar);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error Number Format: " + car);
-                } catch (Exception e) {
-                    System.out.println("Errors: " + e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Error read file: " + e.getMessage());
-            throw e;
+    @Override
+    public void saveToFile() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(
+                new FileOutputStream(CAR_FILE))) {
+            oos.writeObject(cars);
+            System.out.println("Successfully saved " + cars.size() + " cars to file.");
+        } catch (IOException e) {
+            System.err.println("Error saving cars to file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Override
-    public void addNew(Car car) throws Exception {
-        carList.add(car);
+    public void loadFromFile() {
+        try (ObjectInputStream ois = new ObjectInputStream(
+                new FileInputStream(CAR_FILE))) {
+            cars = (List<Car>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            cars = new ArrayList<>();
+        }
     }
 
     @Override
-    public List<Car> getList() throws Exception {
-        if (carList.isEmpty()) {
-            throw new Exception("Car list is empty.");
-        }
-        return carList;
+    public List<Car> getUninsuredCars() {
+        return cars.stream()
+                .filter(car -> !hasInsurance(car.getLicensePlate()))
+                .sorted((c1, c2) -> Long.compare(c2.getVehicleValue(), c1.getVehicleValue()))
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public void saveToFile(String filePath) throws Exception {
-        try {
-            List<String> dataToWrite = new ArrayList<>();
-
-            for (Car car : carList) {
-                String line = String.format("%s,%s,%s,%s,%d,%s,%s,%s",
-                        car.getLicensePlate(),
-                        car.getCarOwner(),
-                        car.getPhoneNumber(),
-                        car.getCarBrand(),
-                        car.getPrice(),
-                        dateFormat.format(car.getRegisterDate()),
-                        car.getPlaceOfRegistration(),
-                        car.getNumberOfSeat()
-                );
-                dataToWrite.add(line);
-            }
-
-            File file = new File(filePath);
-
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-                for (String line : dataToWrite) {
-                    writer.write(line);
-                    writer.newLine();
-                }
-            } catch (IOException e) {
-                throw new Exception("Error while writing data to file: " + e.getMessage(), e);
-            }
-        } catch (Exception e) {
-            throw new Exception("An error occurred while saving data: " + e.getMessage(), e);
-        }
-    }
-
-    public Car getCarByLicensePlate(String licensePlate) {
-        if (carList.isEmpty()) {
-            System.out.println("List is empty.");
-            return null;
-        }
-        for (Car car : carList) {
-            if (car.getLicensePlate().equalsIgnoreCase(licensePlate)) {
-                return car;
-            }
-        }
-        return null;
-    }
-
-    public void deleteCar(Car car) throws Exception {
-        if (!carList.remove(car)) {
-            throw new Exception("Failed to delete car");
-        }
+    private boolean hasInsurance(String licensePlate) {
+        InsuranceDAO insuranceDAO = new InsuranceDAO();
+        return insuranceDAO.hasActiveInsurance(licensePlate);
     }
 }

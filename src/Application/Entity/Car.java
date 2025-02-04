@@ -4,48 +4,39 @@
  */
 package Application.Entity;
 
-import Utils.DataInput;
-import static Utils.validation.ValidCarInput.getDistrictNameByCode;
-import static Utils.validation.ValidCarInput.validateCarBrand;
-import static Utils.validation.ValidCarInput.validateCarOwner;
-import static Utils.validation.ValidCarInput.validateLicensePlate;
-import static Utils.validation.ValidCarInput.validateNumberOfSeats;
-import static Utils.validation.ValidCarInput.validatePhoneNumber;
-import static Utils.validation.ValidCarInput.validateRegistrationDate;
-import static Utils.validation.ValidCarInput.validateVehicleValue;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  *
  * @author asus
  */
-public class Car {
-
+public class Car implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String licensePlate;
     private String carOwner;
     private String phoneNumber;
     private String carBrand;
-    private int price;
-    private Date registerDate;
-    private String placeOfRegistration;
-    private String numberOfSeat;
+    private long vehicleValue;
+    private Date registrationDate;
+    private String registrationPlace;
+    private int numberOfSeats;
 
-    public Car() {
-    }
-
-    public Car(String licensePlate, String carOwner, String phoneNumber, String carBrand, int price, Date registerDate, String placeOfRegistration, String numberOfSeat) {
+    // Constructor
+    public Car(String licensePlate, String carOwner, String phoneNumber,
+            String carBrand, long vehicleValue, Date registrationDate,
+            String registrationPlace, int numberOfSeats) {
         this.licensePlate = licensePlate;
         this.carOwner = carOwner;
         this.phoneNumber = phoneNumber;
         this.carBrand = carBrand;
-        this.price = price;
-        this.registerDate = registerDate;
-        this.placeOfRegistration = placeOfRegistration;
-        this.numberOfSeat = numberOfSeat;
+        this.vehicleValue = vehicleValue;
+        this.registrationDate = registrationDate;
+        this.registrationPlace = registrationPlace;
+        this.numberOfSeats = numberOfSeats;
     }
 
+    // Getters and Setters
     public String getLicensePlate() {
         return licensePlate;
     }
@@ -71,59 +62,56 @@ public class Car {
     }
 
     public String getCarBrand() {
-        return carBrand;
+        return carBrand.toUpperCase();
     }
 
     public void setCarBrand(String carBrand) {
         this.carBrand = carBrand;
     }
 
-    public int getPrice() {
-        return price;
+    public long getVehicleValue() {
+        return vehicleValue;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setVehicleValue(long vehicleValue) {
+        this.vehicleValue = vehicleValue;
     }
 
-    public Date getRegisterDate() {
-        return registerDate;
+    public Date getRegistrationDate() {
+        return registrationDate;
     }
 
-    public void setRegisterDate(Date registerDate) {
-        this.registerDate = registerDate;
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
-    public String getPlaceOfRegistration() {
-        return placeOfRegistration;
+    public String getRegistrationPlace() {
+        return registrationPlace;
     }
 
-    public void setPlaceOfRegistration(String placeOfRegistration) {
-        this.placeOfRegistration = placeOfRegistration;
+    public void setRegistrationPlace(String registrationPlace) {
+        this.registrationPlace = registrationPlace;
     }
 
-    public String getNumberOfSeat() {
-        return numberOfSeat;
+    public int getNumberOfSeats() {
+        return numberOfSeats;
     }
 
-    public void setNumberOfSeat(String numberOfSeat) {
-        this.numberOfSeat = numberOfSeat;
+    public void setNumberOfSeats(int numberOfSeats) {
+        this.numberOfSeats = numberOfSeats;
     }
-
-   
 
     @Override
     public String toString() {
-        // Trả về chuỗi với thông tin chi tiết về chiếc xe
         return "Car{"
                 + "licensePlate='" + licensePlate + '\''
                 + ", carOwner='" + carOwner + '\''
                 + ", phoneNumber='" + phoneNumber + '\''
                 + ", carBrand='" + carBrand + '\''
-                + ", price=" + price
-                + ", registerDate=" + registerDate
-                + ", placeOfRegistration='" + placeOfRegistration + '\''
-                + ", numberOfSeat='" + numberOfSeat + '\''
+                + ", vehicleValue=" + vehicleValue
+                + ", registrationDate=" + registrationDate
+                + ", registrationPlace='" + registrationPlace + '\''
+                + ", numberOfSeats=" + numberOfSeats
                 + '}';
     }
 }
